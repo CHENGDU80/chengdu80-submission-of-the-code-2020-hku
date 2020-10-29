@@ -37,15 +37,19 @@ const columns = [
 export const NewsList = ({ ticker }) => {
   const [data, setData] = useState([]);
   useEffect(() => {
+    setData([]);
     fetch(`http://localhost:5000/get-news-sentiments?ticker=${ticker}`)
       .then(response => response.json())
-      .then(data => {
-        const negative = data["negative"];
-        const positive = data["positive"];
-        negative.forEach(e => (e.sentiment = "negative"));
-        positive.forEach(e => (e.sentiment = "positive"));
-        setData(negative.concat(positive));
-      });
+      .then(
+        data => {
+          const negative = data["negative"];
+          const positive = data["positive"];
+          negative.forEach(e => (e.sentiment = "negative"));
+          positive.forEach(e => (e.sentiment = "positive"));
+          setData(negative.concat(positive));
+        },
+        [ticker]
+      );
   }, [ticker]);
   return <Table columns={columns} dataSource={data} />;
 };
